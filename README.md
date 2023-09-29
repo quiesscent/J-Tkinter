@@ -1,6 +1,6 @@
 # TKINTER COURSE 
 
-![image]("image.png")
+![image]("./image.png")
 
 This is a repo of the journey I am or will be undertaking in my journey to become a great python developer. 
 
