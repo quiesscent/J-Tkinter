@@ -53,7 +53,7 @@ def display():
     u_title = Label(users, text="Current Users")
     u_title.grid(row=1, column=2)
 
-    info = Label(users, text=records)
+    info = Label(users, text='yoongi')
     info.grid(row=2, column=2, columnspan=3)
 
     conn.commit()

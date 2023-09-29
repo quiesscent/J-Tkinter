@@ -48,20 +48,24 @@ def submit():
     country.delete(0, END)
 
 
-def query():
-
+def display():
     users = Tk()
     users.title("Records")
     users.geometry("400x400")
+
     conn = sqlite3.connect('my_database.db')
     show = conn.cursor()
+
     show.execute("SELECT *, oid FROM address")
     data = show.fetchall()
     get_info = ''
     for record in data:
-        get_info += str(record) + "\n"
+        get_info += str(record[5]) + ' ' + str(record[0]).title() + ' ' + str(record[1]).title() + ' of ' + str(
+            record[3]).title() + ', ' + str(record[4]).title() + "\n"
 
     # a Query label
+    head = Label(users, text='AVAILABLE USERS')
+    head.grid(row=0, column=3, columnspan=2,ipadx=140)
     rcd = Label(users, text=get_info)
     rcd.grid(row=1, column=0, columnspan=2)
 
@@ -70,15 +74,14 @@ def query():
 
     # close db
     conn.close()
-    
 
+    users.mainloop()
 
-def delete():
+def clear():
     conn = sqlite3.connect("my_database.db")
 
-    c = conn.cursor()
-
-    c.execute("DELETE FROM address")
+    cls = conn.cursor()
+    cls.execute("DELETE FROM address")
 
     # commit changes
     conn.commit()
@@ -87,12 +90,12 @@ def delete():
     conn.close()
 
 
-def usr_dlt():
+def delete():
     conn = sqlite3.connect("my_database.db")
 
-    c = conn.cursor()
+    dlt = conn.cursor()
 
-    c.execute("DELETE from address WHERE f_name = " + dlt_user.get())
+    dlt.execute("DELETE from address WHERE oid = " + dlt_user.get())
 
     # commit changes
     conn.commit()
@@ -104,21 +107,21 @@ def usr_dlt():
 
 
 # Updating the database records
-def edit():
-
+def update():
     edt = Tk()
-    edt.title("Edit data")
-    icon = PhotoImage("download.ico")
-    # edt.iconphoto(False, icon)
+    edt.title("Update Data")
+    # icon = PhotoImage("download.ico")
+    # edt.icon-photo(False, icon)
+
     conn = sqlite3.connect("my_database.db")
 
+    # text areas
     f_name_editor = Entry(edt, width=30)
     s_name_editor = Entry(edt, width=30)
     age_editor = Entry(edt, width=30)
     city_editor = Entry(edt, width=30)
     country_editor = Entry(edt, width=30)
 
-    # display your text areas
     f_name_editor.grid(row=0, column=1, padx=20)
     s_name_editor.grid(row=1, column=1, padx=20)
     age_editor.grid(row=2, column=1, padx=20)
@@ -132,17 +135,18 @@ def edit():
     city_label_ed = Label(edt, text="City Name")
     country_label_ed = Label(edt, text="Country Name")
 
-    # display our labels
     f_name_label_ed.grid(row=0, column=0)
     s_name_label_ed.grid(row=1, column=0)
     age_label_ed.grid(row=2, column=0)
     city_label_ed.grid(row=3, column=0)
     country_label_ed.grid(row=4, column=0)
-    c = conn.cursor()
 
+    sbt_ed = Button(edt, text="Add to Database", command=submit)
+    sbt_ed.grid(row=5, column=0, columnspan=4, padx=10, pady=10, ipadx=150)
+
+    updt = conn.cursor()
     # commit changes
     conn.commit()
-
     # close db
     conn.close()
 
@@ -157,7 +161,6 @@ city = Entry(root, width=30)
 country = Entry(root, width=30)
 dlt_user = Entry(root, width=30)
 
-# display your text areas
 f_name.grid(row=0, column=1, padx=20)
 s_name.grid(row=1, column=1, padx=20)
 age.grid(row=2, column=1, padx=20)
@@ -173,7 +176,6 @@ city_label = Label(root, text="City Name")
 country_label = Label(root, text="Country Name")
 user_dlt = Label(root, text='Enter Name')
 
-# display our labels
 f_name_label.grid(row=0, column=0)
 s_name_label.grid(row=1, column=0)
 age_label.grid(row=2, column=0)
@@ -183,26 +185,26 @@ user_dlt.grid(row=7, column=0)
 
 # submit buttons
 sbt = Button(root, text="Add to Database", command=submit)
-sbt.grid(row=5, column=0, columnspan=2, padx=10, pady=10)
+sbt.grid(row=5, column=0, columnspan=4, padx=10, pady=10, ipadx=150)
 
 # show records
-querry = Button(root, text="Show Records", command=query)
-querry.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
+display = Button(root, text="Show Records", command=display)
+display.grid(row=6, column=0, columnspan=4, padx=10, pady=10, ipadx=155)
 
 # delete all
-dlt = Button(root, text="Clear Records", command=delete)
-dlt.grid(row=9, column=0, columnspan=2, padx=10, pady=10)
+dlt = Button(root, text="Clear Records", command=clear)
+dlt.grid(row=9, column=0, columnspan=4, padx=10, pady=10, ipadx=155)
 
 # delete record
-dlt_s_user = Button(root, text='Delete user', command=usr_dlt)
-dlt_s_user.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
+dlt_s_user = Button(root, text='Delete user', command=delete)
+dlt_s_user.grid(row=8, column=0, columnspan=4, padx=10, pady=10, ipadx=160)
 
 # edit the records
-dlt_s_user = Button(root, text='Edit', command=edit)
-dlt_s_user.grid(row=10, column=0, columnspan=2, padx=10, pady=10)
+update = Button(root, text='Edit', command=update)
+update.grid(row=10, column=0, columnspan=4, padx=10, pady=10, ipadx=185)
+
 # commit your changes in the database
 conn.commit()
-
 # closing the connectio
 conn.close()
 
