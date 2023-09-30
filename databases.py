@@ -1,4 +1,5 @@
 from tkinter import *
+import customtkinter
 from PIL import ImageTk, Image
 import sqlite3
 
@@ -22,6 +23,29 @@ c.execute(""
     )
 "")
 """
+
+
+def fill():
+    record_id = dlt_user.get()
+    conn = sqlite3.connect("my_database.db")
+    show = conn.cursor()
+
+    show.execute("""UPDATE address SET 
+    first_name = :first,
+    second_name = :last,
+    age = :age,
+    city = :city,
+    country = :country 
+    WHERE oid = :oid""", {
+        'first': f_name_editor.get(),
+        'last': s_name_editor.get(),
+        'age': age_editor.get(),
+        'city': city_editor.get(),
+        'country': country_editor.get(),
+        'oid': record_id
+    })
+    conn.commit()
+    conn.close()
 
 
 def submit():
@@ -60,12 +84,12 @@ def display():
     data = show.fetchall()
     get_info = ''
     for record in data:
-        get_info += str(record[5]) + ' ' + str(record[0]).title() + ' ' + str(record[1]).title() + ' of ' + str(
+        get_info += str(record[5]) + '\t' + str(record[0]).title() + ' ' + str(record[1]).title() + ' of ' + str(
             record[3]).title() + ', ' + str(record[4]).title() + "\n"
 
     # a Query label
     head = Label(users, text='AVAILABLE USERS')
-    head.grid(row=0, column=3, columnspan=2,ipadx=140)
+    head.grid(row=0, column=3, columnspan=2, ipadx=140)
     rcd = Label(users, text=get_info)
     rcd.grid(row=1, column=0, columnspan=2)
 
@@ -76,6 +100,7 @@ def display():
     conn.close()
 
     users.mainloop()
+
 
 def clear():
     conn = sqlite3.connect("my_database.db")
@@ -113,7 +138,18 @@ def update():
     # icon = PhotoImage("download.ico")
     # edt.icon-photo(False, icon)
 
+    record_id = dlt_user.get()
     conn = sqlite3.connect("my_database.db")
+    show =  conn.cursor()
+    show.execute("SELECT * FROM address WHERE oid = " + record_id)
+    data = show.fetchall()
+
+    # setting values to be global
+    global f_name_editor
+    global s_name_editor
+    global city_editor
+    global country_editor
+    global age_editor
 
     # text areas
     f_name_editor = Entry(edt, width=30)
@@ -141,7 +177,7 @@ def update():
     city_label_ed.grid(row=3, column=0)
     country_label_ed.grid(row=4, column=0)
 
-    sbt_ed = Button(edt, text="Add to Database", command=submit)
+    sbt_ed = Button(edt, text="Add to Database", command=fill)
     sbt_ed.grid(row=5, column=0, columnspan=4, padx=10, pady=10, ipadx=150)
 
     updt = conn.cursor()
@@ -151,6 +187,13 @@ def update():
     conn.close()
 
     dlt_user.delete(0, END)
+
+    for users in data:
+        f_name_editor.insert(0, users[0])
+        s_name_editor.insert(0, users[1])
+        age_editor.insert(0, users[2])
+        city_editor.insert(0, users[3])
+        country_editor.insert(0, users[4])
 
 
 # text areas
