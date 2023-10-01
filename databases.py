@@ -1,8 +1,9 @@
 from tkinter import *
 import customtkinter
+import ttkbootstrap as tp
+from ttkbootstrap.constants import *
 from PIL import ImageTk, Image
 import sqlite3
-
 root = Tk()
 root.title("My Records")
 #  connect the database or create
